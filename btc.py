@@ -26,7 +26,7 @@ def get_crypto_price():
             high = price_data["CURRENT_DAY_HIGH"]  # 24시간 최고가
             low = price_data["CURRENT_DAY_LOW"]  # 24시간 최저가
 
-            return f"BTC/USD 현재 가격: ${price}, 최고가: ${high}, 최저가: ${low}"
+            return f"BTC/USD\n 현재 가격: ${price}\n 최고가: ${high}\n 최저가: ${low}\n"
         except KeyError:
             return "API 응답에서 예상하지 못한 데이터 구조입니다."
     else:
@@ -58,4 +58,4 @@ if __name__ == "__main__":
     while True:
         update_readme()
         print("README.md 파일이 업데이트되었습니다.")
-        time.sleep(120)  # 2분 대기
+        time.sleep(300)  # 5분 대기
