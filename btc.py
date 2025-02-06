@@ -24,22 +24,22 @@ def get_crypto_price():
         try:
             # JSON 응답의 정확한 구조로 데이터 접근
             price_data = data["Data"][SYMBOL]
-            current_price = price_data["VALUE"]  # 현재 가격
-            high_price = price_data["CURRENT_DAY_HIGH"]  # 24시간 최고가
-            low_price = price_data["CURRENT_DAY_LOW"]  # 24시간 최저가
-            open_price = price_data["CURRENT_DAY_OPEN"]  # 시가
-            change_24h = price_data["CURRENT_DAY_CHANGE"]  # 변화량
-            change_percentage = price_data["CURRENT_DAY_CHANGE_PERCENTAGE"]  # 변화율
-            volume_24h = price_data["CURRENT_DAY_VOLUME"]  # 24시간 거래량
+            current_price = price_data["VALUE"]
+            high_price = price_data["CURRENT_DAY_HIGH"]
+            low_price = price_data["CURRENT_DAY_LOW"]
+            open_price = price_data["CURRENT_DAY_OPEN"]
+            change_24h = price_data["CURRENT_DAY_CHANGE"]
+            change_percentage = price_data["CURRENT_DAY_CHANGE_PERCENTAGE"]
+            volume_24h = price_data["CURRENT_DAY_VOLUME"]
 
             return {
-                "current_price": current_price,
-                "high_price": high_price,
-                "low_price": low_price,
-                "open_price": open_price,
-                "change_24h": change_24h,
-                "change_percentage": change_percentage,
-                "volume_24h": volume_24h,
+                "current_price": round(current_price, 2),
+                "high_price": round(high_price, 2),
+                "low_price": round(low_price, 2),
+                "open_price": round(open_price, 2),
+                "change_24h": round(change_24h, 2),
+                "change_percentage": round(change_percentage, 2),
+                "volume_24h": round(volume_24h, 2),
             }
         except KeyError:
             return None
@@ -79,7 +79,7 @@ def update_readme(price_info):
             f"- 시가: ${open_price}\n"
             f"- 24시간 최고가: ${high_price}\n"
             f"- 24시간 최저가: ${low_price}\n"
-            f"- 24시간 변화량: ${change_24h} ({change_percentage:.2f}%)\n"
+            f"- 24시간 변화량: ${change_24h} ({change_percentage}%)\n"
             f"- 24시간 거래량: {volume_24h} BTC"
         )
 
