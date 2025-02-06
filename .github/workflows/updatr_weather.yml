@@ -1,12 +1,15 @@
 # .github/workflows/update_crypto.yml
-name: Update Crypto Prices in README
+name: Update Crypto Prices and News in README
+
 on:
   schedule:
-    - cron: "*/5 * * * *"  # 매 5분마다 실행
+    - cron: "*/2 * * * *"  # 매 2분마다 실행
   workflow_dispatch:  # 수동 실행 가능
+
 jobs:
   update-readme:
     runs-on: ubuntu-latest
+
     steps:
       - name: 리포지토리 체크아웃
         uses: actions/checkout@v3
@@ -16,7 +19,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: ccdata.io API로 비트코인 가격 업데이트
+      - name: ccdata.io API로 비트코인 가격 및 뉴스 업데이트
         run: |
           pip install requests python-dotenv
           python btc.py
@@ -28,5 +31,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
-          git commit -m "자동 업데이트: 비트코인 가격 정보 갱신" || echo "No changes to commit"
+          git commit -m "자동 업데이트: 비트코인 가격 및 뉴스 정보 갱신" || echo "No changes to commit"
           git push
