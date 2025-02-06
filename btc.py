@@ -3,7 +3,6 @@ import time
 from datetime import datetime
 from dotenv import load_dotenv
 import os
-import matplotlib.pyplot as plt
 
 # .env 파일에서 환경 변수 로드
 load_dotenv()
@@ -14,7 +13,6 @@ MARKET = "ccix"
 URL = f"https://data-api.cryptocompare.com/index/cc/v1/latest/tick?market={MARKET}&instruments={SYMBOL}&api_key={API_KEY}"
 
 README_PATH = "README.md"
-GRAPH_PATH = "crypto_price_graph.png"
 
 def get_crypto_price():
     """ccdata.io API를 호출하여 비트코인(BTC)의 가격 데이터를 가져옴"""
@@ -46,22 +44,24 @@ def get_crypto_price():
     else:
         return None
 
-def plot_crypto_price(current_price, high_price, low_price):
-    """비트코인 가격 변화를 보여주는 간단한 막대 그래프 생성"""
-    prices = [current_price, high_price, low_price]
-    labels = ["현재 가격", "24시간 최고가", "24시간 최저가"]
-
-    plt.figure(figsize=(8, 5))
-    plt.bar(labels, prices, color=['blue', 'green', 'red'])
-    plt.title("비트코인(BTC) 가격 변동")
-    plt.ylabel("가격 (USD)")
-    plt.savefig(GRAPH_PATH)
-    plt.close()
+def get_ascii_art(change_percentage):
+    """24시간 변화 퍼센트에 따라 아스키 아트를 반환"""
+    if change_percentage > 0:
+        return """. ᕱ__ᕱ
+(⸝⸝> ̫ <⸝⸝)
+♡/ ∩ ∩ \\
+"""
+    else:
+        return """･ﾟﾟ･｡   /\\__/\\ ｡･ﾟﾟ･
+｡･ﾟﾟ･( > ᴥ <) ･ﾟﾟ･｡
+   (\\(__u_u)
+"""
 
 def update_readme(price_info):
     """README.md 파일을 업데이트"""
     if price_info is None:
-        crypto_info = "API 응답에서 필요한 데이터를 찾을 수 없습니다."
+        crypto_info = "API response does not contain the required data."
+        ascii_art = ""
     else:
         current_price = price_info["current_price"]
         high_price = price_info["high_price"]
@@ -71,16 +71,16 @@ def update_readme(price_info):
         change_percentage = price_info["change_percentage"]
         volume_24h = price_info["volume_24h"]
 
-        # 그래프 생성
-        plot_crypto_price(current_price, high_price, low_price)
+        # 아스키 아트 선택
+        ascii_art = get_ascii_art(change_percentage)
 
         crypto_info = (
-            f"BTC/USD 현재 가격: ${current_price}\n"
-            f"- 시가: ${open_price}\n"
-            f"- 24시간 최고가: ${high_price}\n"
-            f"- 24시간 최저가: ${low_price}\n"
-            f"- 24시간 변화량: ${change_24h} ({change_percentage}%)\n"
-            f"- 24시간 거래량: {volume_24h} BTC"
+            f"BTC/USD Current Price: ${current_price}\n"
+            f"- Open Price: ${open_price}\n"
+            f"- 24h High: ${high_price}\n"
+            f"- 24h Low: ${low_price}\n"
+            f"- 24h Change: ${change_24h} ({change_percentage}%)\n"
+            f"- 24h Volume: {volume_24h} BTC"
         )
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -88,25 +88,8 @@ def update_readme(price_info):
     readme_content = f"""
 # Crypto Price Status
 
-이 리포지토리는 ccdata.io API를 사용하여 비트코인(BTC)의 가격 정보를 자동으로 업데이트합니다.
+This repository uses the ccdata.io API to automatically update Bitcoin (BTC) price information.
 
-## 현재 비트코인 가격
+## Current Bitcoin Price
 > {crypto_info}
 
-![비트코인 가격 변화]({GRAPH_PATH})
-
-⏳ 업데이트 시간: {now} (UTC)
-
----
-자동 업데이트 봇에 의해 관리됩니다.
-"""
-
-    with open(README_PATH, "w", encoding="utf-8") as file:
-        file.write(readme_content)
-
-if __name__ == "__main__":
-    while True:
-        price_info = get_crypto_price()
-        update_readme(price_info)
-        print("README.md 파일이 업데이트되었습니다.")
-        time.sleep(120)  # 2분 대기
